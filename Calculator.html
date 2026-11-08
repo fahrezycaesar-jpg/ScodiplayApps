@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="theme-color" content="#000000" />
+<title>Kalkulator Pintar 100% Gratis</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html, body {
+    width: 100%;
+    min-height: 100%;
+    background: #000;
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    -webkit-touch-callout: none;
+    touch-action: manipulation;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+
+  /* ================= STRUKTUR HALAMAN ================= */
+  .page {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    background: #000;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+    z-index: 1;
+  }
+
+  .page.active {
+    opacity: 1;
+    pointer-events: auto;
+    z-index: 10;
+  }
+
+  /* ================= HALAMAN 1: HOME ================= */
+  .video-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 19 / 6;
+    flex: 0 0 auto;
+    background: #000;
+    overflow: hidden;
+  }
+
+  .video-wrap video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    pointer-events: none;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+
+  .blur-bottom {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    backdrop-filter: blur(16px) saturate(115%);
+    -webkit-backdrop-filter: blur(16px) saturate(115%);
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      transparent 0%,
+      transparent 32%,
+      rgba(0, 0, 0, 0.55) 62%,
+      #000 100%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0%,
+      transparent 32%,
+      rgba(0, 0, 0, 0.55) 62%,
+      #000 100%
+    );
+  }
+
+  .fade-bottom {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0) 55%,
+      rgba(0, 0, 0, 0.45) 82%,
+      #000 100%
+    );
+  }
+
+  .fallback {
+    position: absolute;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at 50% 40%, #1a1a2e 0%, #000 70%);
+    color: #fff;
+    letter-spacing: 0.3em;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 0.4; }
+    50%      { opacity: 1;   }
+  }
+
+  .content {
+    flex: 1 1 auto;
+    background: #000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    text-align: center;
+    padding: 32px 20px 30px;
+    position: relative;
+    overflow-y: auto;
+  }
+
+  .content::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 64%;
+    max-width: 320px;
+    height: 1px;
+    background: linear-gradient(
+      to right,
+      transparent,
+      rgba(255, 255, 255, 0.28),
+      transparent
+    );
+  }
+
+  .title {
+    color: #fff;
+    font-weight: 800;
+    font-size: clamp(1.3rem, 5.8vw, 2rem);
+    line-height: 1.25;
+    letter-spacing: 0.02em;
+    animation: rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .title .free {
+    display: inline-block;
+    background: linear-gradient(90deg, #b438f9 0%, #ffffff 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    white-space: nowrap;
+  }
+
+  .no-login {
+    margin-top: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 15px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.72);
+    font-size: clamp(0.72rem, 3.1vw, 0.84rem);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    animation: rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.12s both;
+  }
+
+  .no-login .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #b738f9;
+    box-shadow: 0 0 10px rgba(198, 57, 249, 0.9019607843137255);
+    animation: blink 1.8s ease-in-out infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1;   }
+    50%      { opacity: 0.35; }
+  }
+
+  .btn-kalkulator {
+    position: relative;
+    margin-top: clamp(22px, 6vw, 38px);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: min(100%, 320px);
+    padding: 17px 32px;
+    border: none;
+    border-radius: 18px;
+    font-family: inherit;
+    font-size: clamp(0.95rem, 4vw, 1.05rem);
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #04120c;
+    cursor: pointer;
+    background: linear-gradient(135deg, #b438f9 0%, #ffffff 100%);
+    box-shadow:
+      0 10px 28px -8px rgba(255, 255, 255, 0.5490196078431373),
+      0 4px 14px -4px rgba(188, 20, 251, 0.45098039215686275),
+      inset 0 1px 0 rgba(255, 255, 255, 0.55);
+    transition: transform 0.16s ease, box-shadow 0.16s ease, filter 0.16s ease;
+    animation: rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.22s both;
+    overflow: hidden;
+  }
+
+  .btn-kalkulator::after {
+    content: "";
+    position: absolute;
+    top: -60%;
+    left: -60%;
+    width: 220%;
+    height: 220%;
+    background: linear-gradient(115deg, transparent 42%, rgba(255, 255, 255, 0.55) 50%, transparent 58%);
+    transform: translateX(-120%);
+    animation: shine 3.6s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  @keyframes shine {
+    0%   { transform: translateX(-120%); }
+    55%  { transform: translateX(120%);  }
+    100% { transform: translateX(120%);  }
+  }
+
+  .btn-kalkulator svg {
+    width: 20px;
+    height: 20px;
+    flex: 0 0 auto;
+  }
+
+  .btn-kalkulator:active {
+    transform: scale(0.965);
+    filter: brightness(1.06);
+  }
+
+  .bottom-image {
+    margin-top: auto;
+    padding-top: 30px;
+    width: 100%;
+    max-width: 180px;
+    height: auto;
+    object-fit: contain;
+    opacity: 0.9;
+    animation: rise 1s cubic-bezier(0.22, 1, 0.36, 1) 0.4s both;
+  }
+
+  /* ================= HALAMAN 2: KALKULATOR ================= */
+  #page-kalkulator {
+    background: #000;
+  }
+
+  /* Latar belakang gambar full layar dengan blur transparan */
+  .calc-bg {
+    position: absolute;
+    top: -10%; left: -10%;
+    width: 120%; height: 120%;
+    background-image: url('wallpaper.png');
+    background-size: cover;
+    background-position: center;
+    filter: blur(40px);
+    z-index: -2;
+  }
+
+  /* Overlay transparan tipis */
+  .calc-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.15);
+    z-index: -1;
+  }
+
+  /* Tombol Kembali (Back) */
+  .btn-back {
+    position: absolute;
+    top: 24px;
+    left: 20px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: background 0.2s ease, transform 0.15s ease;
+    z-index: 10;
+  }
+
+  .btn-back:active {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(0.92);
+  }
+
+  .btn-back svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  /* ---------- WADAH KALKULATOR ---------- */
+  .calculator {
+    position: relative;
+    z-index: 5;
+    width: 100%;
+    max-width: 430px;
+    height: 100%;
+    max-height: 820px;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 76px 14px calc(14px + env(safe-area-inset-bottom, 0px));
+    min-height: 0;
+  }
+
+  /* ---------- LAYAR ---------- */
+  .calc-display {
+    flex: 1 1 auto;
+    min-height: 96px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: stretch;
+    gap: 6px;
+    padding: 16px 18px;
+    border-radius: 24px;
+    background: rgba(0, 0, 0, 0.42);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 12px 30px -18px rgba(0, 0, 0, 0.9);
+    overflow: hidden;
+  }
+
+  .calc-preview {
+    min-height: 1.25em;
+    font-size: clamp(0.78rem, 3.4vw, 0.98rem);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: rgba(255, 255, 255, 0.52);
+    text-align: right;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: color 0.2s ease;
+  }
+
+  .calc-screen {
+    font-size: clamp(2.2rem, 11vw, 3.4rem);
+    font-weight: 700;
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+    color: #fff;
+    text-align: right;
+    white-space: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    text-shadow: 0 2px 14px rgba(0, 0, 0, 0.55);
+  }
+  .calc-screen::-webkit-scrollbar { display: none; }
+
+  /* ---------- TOMBOL ---------- */
+  .calc-keys {
+    flex: 0 0 auto;
+    height: clamp(252px, 46vh, 380px);
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+    gap: 10px;
+    min-height: 0;
+  }
+
+  .key {
+    position: relative;
+    min-width: 0;
+    min-height: 0;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: clamp(14px, 4.5vw, 20px);
+    background: rgba(255, 255, 255, 0.09);
+    backdrop-filter: blur(14px) saturate(150%);
+    -webkit-backdrop-filter: blur(14px) saturate(150%);
+    color: #fff;
+    font-family: inherit;
+    font-size: clamp(1.05rem, 5vw, 1.45rem);
+    font-weight: 600;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.13), 0 6px 16px -10px rgba(0, 0, 0, 0.9);
+    transition: transform 0.09s ease, background 0.15s ease, border-color 0.15s ease;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  .key:active {
+    transform: scale(0.94);
+    background: rgba(255, 255, 255, 0.22);
+  }
+
+  .key.fn {
+    background: rgba(255, 255, 255, 0.16);
+    color: #8ff5cd;
+    font-weight: 700;
+    font-size: clamp(0.95rem, 4.4vw, 1.2rem);
+    letter-spacing: 0.03em;
+  }
+  .key.fn:active { background: rgba(255, 255, 255, 0.28); }
+
+  .key.op {
+    background: rgba(56, 249, 168, 0.15);
+    border-color: rgba(56, 249, 168, 0.32);
+    color: #6ef2c0;
+    font-weight: 700;
+    font-size: clamp(1.2rem, 5.6vw, 1.65rem);
+  }
+  .key.op:active { background: rgba(56, 249, 168, 0.3); }
+
+  .key.eq {
+    background: linear-gradient(135deg, #38f9a8 0%, #4ad9ff 100%);
+    border: none;
+    color: #04120c;
+    font-weight: 800;
+    font-size: clamp(1.25rem, 5.8vw, 1.7rem);
+    box-shadow:
+      0 10px 26px -10px rgba(56, 249, 168, 0.75),
+      0 4px 14px -6px rgba(74, 217, 255, 0.6),
+      inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  }
+  .key.eq:active {
+    filter: brightness(1.08);
+    background: linear-gradient(135deg, #38f9a8 0%, #4ad9ff 100%);
+  }
+
+  /* ---------- LAPISAN PELINDING INTERAKSI ---------- */
+  .guard {
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    background: transparent;
+    touch-action: none;
+    pointer-events: none;
+  }
+
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Layar sangat pendek */
+  @media (max-height: 620px) {
+    .calculator { padding-top: 68px; gap: 9px; }
+    .calc-keys { height: clamp(220px, 44vh, 300px); gap: 8px; }
+    .calc-display { min-height: 78px; padding: 12px 14px; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- ================= HALAMAN 1: HOME ================= -->
+  <div id="page-home" class="page active">
+
+    <!-- VIDEO BANNER 19:6 -->
+    <div class="video-wrap">
+      <video
+        id="loading-video"
+        src="gemini_generated_video_3638a3f9.mp4"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="auto"
+        disablepictureinpicture
+        controlslist="nodownload nofullscreen noremoteplayback"
+        oncontextmenu="return false;"
+      ></video>
+
+      <div class="blur-bottom"></div>
+      <div class="fade-bottom"></div>
+      <div class="fallback" id="fallback">Loading…</div>
+    </div>
+
+    <!-- KONTEN BAWAH -->
+    <div class="content">
+      <h1 class="title">
+        Kalkulator Pintar <span class="free">100% Gratis</span>
+      </h1>
+
+      <div class="no-login">
+        <span class="dot"></span>
+        Tanpa Login
+      </div>
+
+      <button class="btn-kalkulator" id="btn-masuk-kalkulator" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="4" y="2.5" width="16" height="19" rx="2.5"></rect>
+          <line x1="8" y1="6.5" x2="16" y2="6.5"></line>
+          <circle cx="8.5" cy="11.5" r="0.9" fill="currentColor" stroke="none"></circle>
+          <circle cx="12" cy="11.5" r="0.9" fill="currentColor" stroke="none"></circle>
+          <circle cx="15.5" cy="11.5" r="0.9" fill="currentColor" stroke="none"></circle>
+          <circle cx="8.5" cy="15.5" r="0.9" fill="currentColor" stroke="none"></circle>
+          <circle cx="12" cy="15.5" r="0.9" fill="currentColor" stroke="none"></circle>
+          <circle cx="15.5" cy="15.5" r="0.9" fill="currentColor" stroke="none"></circle>
+          <line x1="8.5" y1="19" x2="15.5" y2="19"></line>
+        </svg>
+        Kalkulator
+      </button>
+
+      <img src="scodiplay studio.png" alt="Logo" class="bottom-image" />
+    </div>
+  </div>
+
+  <!-- ================= HALAMAN 2: KALKULATOR ================= -->
+  <div id="page-kalkulator" class="page">
+
+    <!-- Latar Belakang Gambar (Blur) -->
+    <div class="calc-bg"></div>
+    <!-- Overlay -->
+    <div class="calc-overlay"></div>
+
+    <!-- Tombol Kembali ke Home -->
+    <button class="btn-back" id="btn-kembali" type="button" aria-label="Kembali">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15 18l-6-6 6-6"/>
+      </svg>
+    </button>
+
+    <!-- KALKULATOR -->
+    <div class="calculator">
+
+      <!-- Layar -->
+      <div class="calc-display">
+        <div class="calc-preview" id="calc-preview"></div>
+        <div class="calc-screen" id="calc-screen">0</div>
+      </div>
+
+      <!-- Tombol -->
+      <div class="calc-keys" id="calc-keys">
+        <!-- BARIS 1: AC, ± (Pindah ke sini), %, ÷ -->
+        <button class="key fn"  type="button" data-action="ac">AC</button>
+        <button class="key fn"  type="button" data-action="sign">±</button>
+        <button class="key fn"  type="button" data-action="percent">%</button>
+        <button class="key op"  type="button" data-action="op" data-op="÷">÷</button>
+
+        <!-- BARIS 2 -->
+        <button class="key"     type="button" data-action="num" data-num="7">7</button>
+        <button class="key"     type="button" data-action="num" data-num="8">8</button>
+        <button class="key"     type="button" data-action="num" data-num="9">9</button>
+        <button class="key op"  type="button" data-action="op" data-op="×">×</button>
+
+        <!-- BARIS 3 -->
+        <button class="key"     type="button" data-action="num" data-num="4">4</button>
+        <button class="key"     type="button" data-action="num" data-num="5">5</button>
+        <button class="key"     type="button" data-action="num" data-num="6">6</button>
+        <button class="key op"  type="button" data-action="op" data-op="−">−</button>
+
+        <!-- BARIS 4 -->
+        <button class="key"     type="button" data-action="num" data-num="1">1</button>
+        <button class="key"     type="button" data-action="num" data-num="2">2</button>
+        <button class="key"     type="button" data-action="num" data-num="3">3</button>
+        <button class="key op"  type="button" data-action="op" data-op="+">+</button>
+
+        <!-- BARIS 5: ⌫ (Pindah ke sini), 0, ., = -->
+        <button class="key fn"  type="button" data-action="del">⌫</button>
+        <button class="key"     type="button" data-action="num" data-num="0">0</button>
+        <button class="key"     type="button" data-action="dot">.</button>
+        <button class="key eq"  type="button" data-action="eq">=</button>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="guard" aria-hidden="true"></div>
+
+<script>
+  (function () {
+    /* ---------- ELEMEN ---------- */
+    const video    = document.getElementById('loading-video');
+    const fallback = document.getElementById('fallback');
+
+    const pageHome = document.getElementById('page-home');
+    const pageCalc = document.getElementById('page-kalkulator');
+
+    const btnMasuk   = document.getElementById('btn-masuk-kalkulator');
+    const btnKembali = document.getElementById('btn-kembali');
+
+    /* ---------- 1. BLOKIR INTERAKSI VIDEO ---------- */
+    document.addEventListener('contextmenu', e => e.preventDefault(), { passive: false });
+
+    video.addEventListener('dragstart', e => e.preventDefault());
+    video.addEventListener('mousedown', e => e.preventDefault());
+
+    document.addEventListener('keydown', e => {
+      const k = e.key.toLowerCase();
+      const blockCombo =
+        k === 'f12' ||
+        (e.ctrlKey && ['u', 's', 'p'].includes(k)) ||
+        (e.ctrlKey && e.shiftKey && ['i', 'j', 'c', 'k'].includes(k));
+      if (blockCombo) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    }, { passive: false });
+
+    /* ---------- 2. PAKSA AUTOPLAY ---------- */
+    const tryPlay = () => {
+      video.muted = true;
+      const p = video.play();
+      if (p && typeof p.catch === 'function') p.catch(() => {});
+    };
+    tryPlay();
+    document.addEventListener('touchstart', tryPlay, { once: true, passive: true });
+    document.addEventListener('click',      tryPlay, { once: true });
+
+    /* ---------- 3. FALLBACK KALAU VIDEO GAGAL ---------- */
+    video.addEventListener('error', () => {
+      video.style.display = 'none';
+      fallback.style.display = 'flex';
+    });
+
+    /* ---------- 4. NAVIGASI HALAMAN ---------- */
+    btnMasuk.addEventListener('click', () => {
+      if (navigator.vibrate) navigator.vibrate(12);
+      pageHome.classList.remove('active');
+      pageCalc.classList.add('active');
+      // pastikan layar kalkulator selalu menampilkan posisi terakhir
+      requestAnimationFrame(() => {
+        const s = document.getElementById('calc-screen');
+        if (s) s.scrollLeft = s.scrollWidth;
+      });
+    });
+
+    btnKembali.addEventListener('click', () => {
+      if (navigator.vibrate) navigator.vibrate(8);
+      pageCalc.classList.remove('active');
+      pageHome.classList.add('active');
+    });
+
+    /* ============================================================
+       5. MESIN KALKULATOR
+       ============================================================ */
+    const screenEl  = document.getElementById('calc-screen');
+    const previewEl = document.getElementById('calc-preview');
+    const keysEl    = document.getElementById('calc-keys');
+
+    // State
+    let expr = '';          // bagian ekspresi yang sudah "dikunci", selalu diakhiri operator
+    let entry = '';         // angka yang sedang diketik
+    let result = null;      // string hasil setelah '='
+    let previousExpr = '';  // ekspresi yang dievaluasi (untuk baris atas)
+
+    const MINUS = '−';      // U+2212, dipakai konsisten di seluruh UI
+
+    /* ---------- FORMAT ANGKA ---------- */
+    function formatNumber(n) {
+      if (!isFinite(n) || isNaN(n)) return 'Error';
+      if (Object.is(n, -0)) n = 0;
+      const abs = Math.abs(n);
+      if (abs !== 0 && (abs >= 1e12 || abs < 1e-9)) {
+        return n.toExponential(6).replace(/\.?0+e/, 'e').replace('e+', 'e');
+      }
+      const r = parseFloat(n.toPrecision(12));
+      return String(r);
+    }
+
+    /* ---------- TOKENIZER ---------- */
+    function tokenize(src) {
+      const tokens = [];
+      let i = 0;
+      while (i < src.length) {
+        const c = src[i];
+        if (c === ' ') { i++; continue; }
+
+        if ((c >= '0' && c <= '9') || c === '.') {
+          let num = '';
+          while (i < src.length && ((src[i] >= '0' && src[i] <= '9') || src[i] === '.')) {
+            num += src[i]; i++;
+          }
+          const v = parseFloat(num);
+          if (!isNaN(v)) tokens.push({ t: 'num', v: v });
+          continue;
+        }
+        if (c === '+')                        { tokens.push({ t: 'op', v: '+' }); i++; continue; }
+        if (c === '-' || c === MINUS)         { tokens.push({ t: 'op', v: MINUS }); i++; continue; }
+        if (c === '*' || c === '×')           { tokens.push({ t: 'op', v: '×' }); i++; continue; }
+        if (c === '/' || c === '÷')           { tokens.push({ t: 'op', v: '÷' }); i++; continue; }
+        i++;
+      }
+      return tokens;
+    }
+
+    /* ---------- PARSER (Recursive Descent) ---------- */
+    function evaluate(tokens) {
+      let pos = 0;
+
+      const peek = () => tokens[pos];
+
+      function parseExpr() {
+        let left = parseTerm();
+        while (peek() && peek().t === 'op' && (peek().v === '+' || peek().v === MINUS)) {
+          const op = tokens[pos++].v;
+          const right = parseTerm();
+          left = (op === '+') ? left + right : left - right;
+        }
+        return left;
+      }
+
+      function parseTerm() {
+        let left = parseUnary();
+        while (peek() && peek().t === 'op' && (peek().v === '×' || peek().v === '÷')) {
+          const op = tokens[pos++].v;
+          const right = parseUnary();
+          if (op === '×') {
+            left = left * right;
+          } else {
+            if (right === 0) throw new Error('DIV0');
+            left = left / right;
+          }
+        }
+        return left;
+      }
+
+      function parseUnary() {
+        if (peek() && peek().t === 'op' && peek().v === MINUS) { pos++; return -parseUnary(); }
+        if (peek() && peek().t === 'op' && peek().v === '+')    { pos++; return  parseUnary(); }
+        return parsePrimary();
+      }
+
+      function parsePrimary() {
+        const tk = tokens[pos];
+        if (!tk || tk.t !== 'num') throw new Error('SYNTAX');
+        pos++;
+        return tk.v;
+      }
+
+      const value = parseExpr();
+      if (pos !== tokens.length) throw new Error('SYNTAX');
+      return value;
+    }
+
+    /* ---------- RENDER ---------- */
+    function render() {
+      let main, small = '';
+
+      if (result !== null) {
+        main  = result;
+        small = previousExpr ? previousExpr + ' =' : '';
+      } else {
+        main = (expr + entry) || '0';
+        const p = livePreview();
+        if (p !== '' && p !== main) small = '= ' + p;
+      }
+
+      screenEl.textContent  = main;
+      previewEl.textContent = small;
+
+      // auto-shrink font
+      const len = main.length;
+      let fs;
+      if (len <= 8)       fs = 'clamp(2.2rem, 11vw, 3.4rem)';
+      else if (len <= 12) fs = 'clamp(1.8rem, 8.5vw, 2.7rem)';
+      else if (len <= 17) fs = 'clamp(1.4rem, 6.5vw, 2.1rem)';
+      else                fs = 'clamp(1.05rem, 5vw, 1.6rem)';
+      screenEl.style.fontSize = fs;
+
+      requestAnimationFrame(() => {
+        screenEl.scrollLeft = screenEl.scrollWidth;
+      });
+    }
+
+    function livePreview() {
+      let full = (expr + entry).replace(/[+\-−×÷]+$/, '');
+      if (!full) return '';
+      try {
+        const tokens = tokenize(full);
+        if (!tokens.length) return '';
+        if (tokens[tokens.length - 1].t !== 'num') return '';
+        const val = evaluate(tokens);
+        if (!isFinite(val)) return '';
+        return formatNumber(val);
+      } catch (e) {
+        return '';
+      }
+    }
+
+    /* ---------- AKSI ---------- */
+    function resetAll() {
+      expr = '';
+      entry = '';
+      result = null;
+      previousExpr = '';
+    }
+
+    function pressDigit(d) {
+      if (result !== null) resetAll();
+      if (entry === '0') {
+        entry = d;
+      } else if (entry === MINUS + '0') {
+        entry = MINUS + d;
+      } else {
+        const digits = entry.replace(/[−.]/g, '');
+        if (digits.length >= 13) return;
+        entry += d;
+      }
+      render();
+    }
+
+    function pressDot() {
+      if (result !== null) resetAll();
+      if (entry === '' || entry === MINUS) {
+        entry += '0.';
+      } else if (!entry.includes('.')) {
+        entry += '.';
+      }
+      render();
+    }
+
+    function pressOp(op) {
+      // lanjutkan dari hasil
+      if (result !== null) {
+        if (result === 'Error') { resetAll(); render(); return; }
+        expr = result + op;
+        entry = '';
+        result = null;
+        previousExpr = '';
+        render();
+        return;
+      }
+
+      // tanda minus yatim dibuang
+      if (entry === MINUS) entry = '';
+
+      if (entry !== '') {
+        expr = expr + entry + op;
+        entry = '';
+      } else if (expr !== '') {
+        const last = expr.slice(-1);
+        // izinkan minus unary setelah × atau ÷  ->  5 × (−3)
+        if (op === MINUS && (last === '×' || last === '÷')) {
+          entry = MINUS;
+        } else {
+          expr = expr.slice(0, -1) + op;   // ganti operator terakhir
+        }
+      } else {
+        if (op === MINUS) entry = MINUS;   // mulai dari angka negatif
+        else return;
+      }
+      render();
+    }
+
+    function pressEquals() {
+      if (result !== null) return;
+
+      let full = (expr + entry).replace(/[+−×÷]+$/, '');
+      if (!full) { resetAll(); render(); return; }
+
+      try {
+        const tokens = tokenize(full);
+        if (!tokens.length) { resetAll(); render(); return; }
+        const val = evaluate(tokens);
+        if (!isFinite(val) || isNaN(val)) throw new Error('BAD');
+
+        previousExpr = full;
+        result = formatNumber(val);
+        expr = '';
+        entry = '';
+      } catch (e) {
+        previousExpr = full;
+        result = 'Error';
+        expr = '';
+        entry = '';
+      }
+      render();
+    }
+
+    function pressAC() {
+      resetAll();
+      render();
+    }
+
+    function pressDel() {
+      if (result !== null) { resetAll(); render(); return; }
+
+      if (entry !== '') {
+        entry = entry.slice(0, -1);
+        if (entry === MINUS) entry = '';
+      } else if (expr !== '') {
+        expr = expr.slice(0, -1);
+      }
+      render();
+    }
+
+    function pressPercent() {
+      if (result !== null) {
+        if (result === 'Error') { resetAll(); render(); return; }
+        const n = parseFloat(result);
+        if (isFinite(n)) result = formatNumber(n / 100);
+        render();
+        return;
+      }
+      if (entry === '' || entry === MINUS) return;
+      const n = parseFloat(entry);
+      if (!isFinite(n)) return;
+      entry = formatNumber(n / 100);
+      render();
+    }
+
+    function pressSign() {
+      if (result !== null) {
+        if (result === 'Error') { resetAll(); render(); return; }
+        const n = parseFloat(result);
+        if (isFinite(n)) result = formatNumber(-n);
+        render();
+        return;
+      }
+      if (entry === '') return;
+      if (entry.charAt(0) === MINUS) entry = entry.slice(1);
+      else entry = MINUS + entry;
+      render();
+    }
+
+    /* ---------- EVENT TOMBOL ---------- */
+    keysEl.addEventListener('click', (e) => {
+      const btn = e.target.closest('button.key');
+      if (!btn) return;
+      if (navigator.vibrate) navigator.vibrate(8);
+
+      switch (btn.dataset.action) {
+        case 'num':     pressDigit(btn.dataset.num); break;
+        case 'dot':     pressDot();      break;
+        case 'op':      pressOp(btn.dataset.op); break;
+        case 'eq':      pressEquals();   break;
+        case 'ac':      pressAC();       break;
+        case 'del':     pressDel();      break;
+        case 'percent': pressPercent();  break;
+        case 'sign':    pressSign();     break;
+      }
+
+      // hindari tombol tetap fokus (biar Space/Enter tidak dobel)
+      btn.blur();
+    });
+
+    /* ---------- DUKUNGAN KEYBOARD ---------- */
+    document.addEventListener('keydown', (e) => {
+      if (!pageCalc.classList.contains('active')) return;
+
+      const k = e.key;
+      let handled = true;
+
+      if (k >= '0' && k <= '9')                     pressDigit(k);
+      else if (k === '.' || k === ',')              pressDot();
+      else if (k === '+')                           pressOp('+');
+      else if (k === '-')                           pressOp(MINUS);
+      else if (k === '*')                           pressOp('×');
+      else if (k === '/')                           pressOp('÷');
+      else if (k === 'Enter' || k === '=')          pressEquals();
+      else if (k === 'Backspace')                   pressDel();
+      else if (k === 'Escape' || k === 'Delete')    pressAC();
+      else if (k === '%')                           pressPercent();
+      else                                          handled = false;
+
+      if (handled) e.preventDefault();
+    }, { passive: false });
+
+    /* ---------- INIT ---------- */
+    render();
+  })();
+</script>
+</body>
+</html>
